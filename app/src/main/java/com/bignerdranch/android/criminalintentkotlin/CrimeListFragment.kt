@@ -1,5 +1,6 @@
 package com.bignerdranch.android.criminalintentkotlin
 
+
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -9,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 
 class CrimeListFragment : Fragment() {
 
@@ -27,6 +27,11 @@ class CrimeListFragment : Fragment() {
         updateUI()
 
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateUI()
     }
 
     private inner class CrimeHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
@@ -55,7 +60,8 @@ class CrimeListFragment : Fragment() {
         }
 
         override fun onClick(v: View) {
-            Toast.makeText(context, "${crime.title} clicked!", Toast.LENGTH_SHORT).show()
+            val intent = CrimeActivity.newIntent(requireContext(), crime.id)
+            startActivity(intent)
         }
 
     }
@@ -82,8 +88,14 @@ class CrimeListFragment : Fragment() {
         val crimeLab = CrimeLab.get()
         val crimes = crimeLab.getCrimes()
 
-        adapter = CrimeAdapter(crimes)
-        crimeRecyclerView.adapter = adapter
+        //TODO Make RecyclerView efficient by only updating the item that changed
+        adapter?.let {
+            it.crimes = crimes
+            it.notifyDataSetChanged()
+        } ?: run {
+            adapter = CrimeAdapter(crimes)
+            crimeRecyclerView.adapter = adapter
+        }
     }
 
 

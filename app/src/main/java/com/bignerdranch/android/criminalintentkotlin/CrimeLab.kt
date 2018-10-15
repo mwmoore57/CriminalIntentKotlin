@@ -20,6 +20,7 @@ class CrimeLab private constructor(context: Context) {
         return crimes
     }
 
+    //TODO Make the getCrime(UUID) efficient by improving the search method
     fun getCrime(id: UUID): Crime? {
         return crimes.find {
             it.id == id
